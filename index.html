@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine</title>
+
+<style>
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:#e6cfd2;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+}
+
+/* ❤️ hearts animation */
+.hearts{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  pointer-events:none;
+}
+
+.heart{
+  position:absolute;
+  bottom:-20px;
+  font-size:20px;
+  animation:float 6s linear infinite;
+  opacity:0.8;
+}
+
+@keyframes float{
+  0%{
+    transform:translateY(0) scale(1);
+    opacity:0.8;
+  }
+  100%{
+    transform:translateY(-110vh) scale(1.5);
+    opacity:0;
+  }
+}
+
+/* layout */
+.app{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  z-index:2;
+}
+
+.page{
+  display:none;
+  width:100%;
+  justify-content:center;
+}
+
+.page.active{
+  display:flex;
+}
+
+.card{
+  width:90%;
+  max-width:420px;
+  padding:35px;
+  background:rgba(255,255,255);
+  border-radius:25px;
+  text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+}
+
+button{
+  margin-top:20px;
+  padding:14px 30px;
+  border:none;
+  border-radius:30px;
+  background:#ff3b5c;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+}
+
+/* slider */
+.slider{
+  overflow:hidden;
+  background:rgba(255,255,255);
+}
+
+.slides{
+  display:flex;
+  transition:0.5s;
+}
+
+.slides img{
+  width:100%;
+  flex-shrink:0;
+  border-radius:15px;
+  object-fit:contain;
+  height:auto;
+}
+
+.envelope{
+  width:100%;
+  cursor:pointer;
+  border-radius:15px;
+}
+
+.photo{
+  width:100%;
+  border-radius:15px;
+  margin-bottom:15px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ❤️ hearts container -->
+<div class="hearts" id="hearts"></div>
+
+<audio id="music" loop>
+  <source src="romantic.mp3">
+</audio>
+
+<div class="app">
+
+<!-- หน้า 1 -->
+<div class="page active" id="page1">
+<div class="card">
+<h1>Happy Valentine's ❤️</h1>
+<p>Would you like to open it?</p>
+<button onclick="playMusic();showPage(2)">Open Card</button>
+</div>
+</div>
+
+<!-- หน้า 2 -->
+<div class="page" id="page2">
+<div class="card">
+<h2>Our Memories</h2>
+
+<div class="slider">
+<div class="slides" id="slides"></div>
+</div>
+
+<button onclick="slide(-1)">⬅</button>
+<button onclick="slide(1)">➡</button>
+<br>
+<button onclick="showPage(3)">Next</button>
+</div>
+</div>
+
+<!-- หน้า 3 -->
+<div class="page" id="page3">
+<div class="card">
+<h2>I wrote a letter for you...</h2>
+
+<img src="envelope.png"
+     class="envelope"
+     onclick="showPage(4)">
+
+<p>Tap to open</p>
+</div>
+</div>
+
+<!-- หน้า 4 -->
+<div class="page" id="page4">
+<div class="card">
+<img src="yourphoto.jpg" class="photo">
+
+<p><b>Ant</b><br></p>
+<p>
+Thank you for loving me the way you do.<br>
+</p>
+<p><b>Inc</b><br></p>
+</div>
+</div>
+
+</div>
+
+<script>
+// เปลี่ยนหน้า
+function showPage(num){
+  document.querySelectorAll(".page")
+  .forEach(p=>p.classList.remove("active"));
+  document.getElementById("page"+num)
+  .classList.add("active");
+}
+
+// เพลง + ลดเสียง
+function playMusic(){
+  const music=document.getElementById("music");
+  music.volume=0.5;
+  music.play();
+}
+
+// สร้างรูป pic1 → pic32
+const slides=document.getElementById("slides");
+for(let i=1;i<=32;i++){
+  const img=document.createElement("img");
+  img.src=`${i}.jpg`;
+  slides.appendChild(img);
+}
+
+// slider
+let index=0;
+function slide(step){
+  const total=slides.children.length;
+
+  index+=step;
+  if(index<0) index=total-1;
+  if(index>=total) index=0;
+
+  slides.style.transform=`translateX(-${index*100}%)`;
+}
+
+// auto slide
+setInterval(()=> slide(1),3000);
+
+// ❤️ สร้างหัวใจลอย
+setInterval(()=>{
+  const heart=document.createElement("div");
+  heart.className="heart";
+  heart.innerHTML="❤️";
+  heart.style.left=Math.random()*100+"%";
+  heart.style.animationDuration=(4+Math.random()*3)+"s";
+
+  document.getElementById("hearts").appendChild(heart);
+
+  setTimeout(()=>heart.remove(),7000);
+},400);
+</script>
+
+</body>
+</html>
